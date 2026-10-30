@@ -1,0 +1,37 @@
+def eliminacion_gaussiana(A, b):
+    n = len(A)
+    # Crear matriz aumentada
+    M = [A[i][:] + [b[i]] for i in range(n)]
+
+    # Pivoteo y eliminación hacia adelante
+    for i in range(n):
+        # Búsqueda del pivote mayor para estabilidad
+        max_el = abs(M[i][i])
+        max_row = i
+        for k in range(i + 1, n):
+            if abs(M[k][i]) > max_el:
+                max_el = abs(M[k][i])
+                max_row = k
+
+        if abs(M[max_row][i]) < 1e-12:
+            return None  # Sistema singular o sin solución única
+
+        M[i], M[max_row] = M[max_row], M[i]
+
+        for k in range(i + 1, n):
+            c = M[k][i] / M[i][i]
+            for j in range(i, n + 1):
+                M[k][j] -= c * M[i][j]
+
+    # Sustitución hacia atrás
+    x = [0.0] * n
+    for i in range(n - 1, -1, -1):
+        s = sum(M[i][j] * x[j] for j in range(i + 1, n))
+        x[i] = (M[i][n] - s) / M[i][i]
+
+    return x
+A = [[3.0, 2.0, 1.0], [1.0, 4.0, 2.0], [2.0, 1.0, 5.0]]
+b = [1000.0, 1300.0, 1500.0]
+
+res = eliminacion_gaussiana(A, b)
+print("Resultado E1.1:", res)
